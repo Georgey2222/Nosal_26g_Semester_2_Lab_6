@@ -131,31 +131,25 @@ function sort_by_attribute(atrb)
     let atr = attribute[atrb];
     return function()
     {
-        for(let it of data)
+        if(last_clicked!==`sort-${atrb+1}`)
         {
-                console.log(it);
+            sort_data.sort((a,b) => {if(deepfind(a,atr)<deepfind(b,atr)) return -1; if(deepfind(a,atr)>deepfind(b,atr)) return 1; return 0; })
+            show_vaues(sort_data);
         }
-        sort_data.sort((a,b) => {if(deepfind(a,atr)<deepfind(b,atr)) return -1; if(deepfind(a,atr)>deepfind(b,atr)) return 1; return 0; })
-        let data_table_div=document.getElementById("data_table");
-        let y=0;
-        for(let element of data_table_div.children)
+        else
         {
-            if(y>3)
-            element.innerText=deepfind(sort_data[Math.trunc(y/4-1)],attribute[y%4]);
-            y++;
+            sort_data.reverse();
+            show_vaues(sort_data);
         }
         const targ=document.getElementById(`sort-${atrb+1}`);
         targ.style="background-color:#e34cb9";
-        targ.classList.remove("activity-button");
-        if(last_clicked!==null)
+        if(last_clicked!==null&&last_clicked!==`sort-${atrb+1}`)
         {
             const last=document.getElementById(last_clicked)
             last.style.backgroundColor="#0f90a2";
-            last.classList.add("activity-button");
-            last.addEventListener("click",sort_by_attribute(Number(last_clicked[5])-1),{once:true})
         }
         last_clicked=`sort-${atrb+1}`;
-        if(clear_sort_clicked==0)
+        if(clear_sort_clicked===0)
         {
             clear_sort_clicked=1;
             clickability("clear-sort");
@@ -165,6 +159,39 @@ function sort_by_attribute(atrb)
         {
             console.log(it);
         }
+    }
+}
+function show_vaues(data)
+{
+    let data_table_div=document.getElementById("data_table");
+    if(data_table_div.children.length===4)
+    {
+        for(let i=0;i<data.length;i++)
+            {
+                let elem,colors=["#c5ecf2","#9ed2ef"];
+                for(let j=0;j<4;j++)
+                {
+                    elem = createlem({tagname:"div",classList:"attribute_field",style:`background-color:${colors[i%2]};font-size:calc(var(--size)*2.5);color: #4a7c8a;white-space:nowrap;`,innerText:`${deepfind(data[i],attribute[j])}`})  
+                    elem.addEventListener('wheel', function (e) {
+                        if (e.deltaY !== 0) 
+                        {
+                            e.preventDefault();
+                            this.scrollLeft += e.deltaY;
+                        }
+                    }, { passive: false });
+                    data_table_div.appendChild(elem);       
+            }    
+        }
+    }
+    else
+    {
+        let y=0;
+        for(let element of data_table_div.children)
+        {
+            if(y>3)
+            element.innerText=deepfind(data[Math.trunc(y/4-1)],attribute[y%4]);
+            y++;
+        } 
     }
 }
 function show_data()
@@ -193,26 +220,12 @@ function show_data()
             createlem({tagname:"p",style:"color:white;font-size:calc(var(--size)*2.5);",innerText:`${attribute[3]}`}),
             createlem({tagname:"p",style:"color:white;font-size:calc(var(--size)*4.5);",innerText:"↓"})]})],               
         })
-    for(let i=0;i<data.length;i++)
-    {
-        let elem,colors=["#c5ecf2","#9ed2ef"];
-        for(let j=0;j<4;j++)
-        {
-            elem = createlem({tagname:"div",classList:"attribute_field",style:`background-color:${colors[i%2]};font-size:calc(var(--size)*2.5);color: #4a7c8a;white-space:nowrap;`,innerText:`${deepfind(data[i],attribute[j])}`})  
-            elem.addEventListener('wheel', function (e) {
-                if (e.deltaY !== 0) {
-                  e.preventDefault();
-                  this.scrollLeft += e.deltaY;
-                }
-              }, { passive: false });
-            data_table_div.appendChild(elem);       
-        }    
-    }
     document.querySelector("section").appendChild(display_sort);
     document.querySelector("section").appendChild(data_table_div);
+    show_vaues(data);
     for(let i=1;i<=4;i++)
     {
-            document.getElementById(`sort-${i}`).addEventListener("click",sort_by_attribute(i-1),{once:true});
+            document.getElementById(`sort-${i}`).addEventListener("click",sort_by_attribute(i-1));
     }
     clickability("button_yes");
     return;
@@ -264,6 +277,7 @@ async function load()
     {
         console.error("Something went wrong: ",error);
         alert(`Error: ${error.message}`);
+        document.getElementById("but-download").addEventListener("click",load,{once:true});
     }
 }
 document.getElementById("but-download").addEventListener("click",load,{once:true});
