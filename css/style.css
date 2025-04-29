@@ -14,6 +14,7 @@ button
     border-radius:calc(var(--size)*0.5);
     border:calc(var(--size)*0.1) solid hsl(0, 0%, 0%);
     font-size: calc(var(--size)*2);
+    color:black;
 }
 label
 {
@@ -72,6 +73,7 @@ section
     grid-row-start: 4;
     grid-row-end: 5;
     height:fit-content;
+    /*margin-bottom: var(--size);*/
 }
 .display_question_container
 {
