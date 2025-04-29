@@ -51,11 +51,6 @@ function create_display_question()
     )
     return res;
 }
-function load_script(src)
-{
-    document.querySelector("body").appendChild(createlem({tagname:"script",src:src}));
-    return;
-}
 function clear()
 {
     document.getElementById("but-download").addEventListener("click",load,{once:true});
@@ -131,7 +126,7 @@ function sort_by_attribute(atrb)
     let atr = attribute[atrb];
     return function()
     {
-        if(last_clicked!==`sort-${atrb+1}`)
+        if(last_clicked!==`sort-${atrb+1}`|| clear_sort_clicked===0)
         {
             sort_data.sort((a,b) => {if(deepfind(a,atr)<deepfind(b,atr)) return -1; if(deepfind(a,atr)>deepfind(b,atr)) return 1; return 0; })
             show_vaues(sort_data);
@@ -154,10 +149,6 @@ function sort_by_attribute(atrb)
             clear_sort_clicked=1;
             clickability("clear-sort");
             document.getElementById("clear-sort").addEventListener("click",clear_sort,{once:true})
-        }
-        for(let it of data)
-        {
-            console.log(it);
         }
     }
 }
@@ -248,8 +239,8 @@ function clear_sort()
 }
 async function load()
 {
-    let url=document.getElementById("enter_url").value;
-    //let url="https://jsonplaceholder.typicode.com/users";
+    //let url=document.getElementById("enter_url").value;
+    let url="https://jsonplaceholder.typicode.com/users";
     try
     {
         const response = await fetch(url);
@@ -267,7 +258,6 @@ async function load()
         document.getElementById("downloads_container").appendChild(label_result);
         clickability("but-clear");
         clickability("but-download");
-        document.getElementById("but-clear").style.color="#ffffff";
         document.getElementById("but-clear").addEventListener("click",clear,{once:true});
         document.querySelector("section").appendChild(create_display_question());
         document.getElementById("button_yes").addEventListener("click",show_data,{once:true});
