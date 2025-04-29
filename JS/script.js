@@ -239,8 +239,8 @@ function clear_sort()
 }
 async function load()
 {
-    //let url=document.getElementById("enter_url").value;
-    let url="https://jsonplaceholder.typicode.com/users";
+    let url=document.getElementById("enter_url").value;
+    //let url="https://jsonplaceholder.typicode.com/users";
     try
     {
         const response = await fetch(url);
